@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cardápio Burger House - Cardápio</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d1b14 50%, #4a2c1a 100%);
+            color: white;
+            overflow-x: hidden;
+        }
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 250px;
+            height: 100vh;
+            background: rgba(0,0,0,0.9);
+            padding: 20px;
+            z-index: 100;
+            box-shadow: 2px 0 10px rgba(255,215,0,0.3);
+        }
+        .logo {
+            width: 210px;
+            height: auto;
+            filter: drop-shadow(0 0 10px #ffd700);
+        }
+        .menu-container {
+            margin-left: 250px;
+            padding: 100px 20px 20px;
+            max-width: 800px;
+        }
+        .section {
+            margin-bottom: 40px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,215,0,0.3);
+        }
+        .section h2 {
+            color: #ffd700;
+            font-size: 24px;
+            margin-bottom: 15px;
+            text-align: center;
+            text-shadow: 0 0 10px #ffd700;
+        }
+        .item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            margin-bottom: 10px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 10px;
+            border-left: 4px solid #ffd700;
+        }
+        .item-details h3 {
+            color: #ffd700;
+            font-size: 18px;
+        }
+        .item-details p {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+        .price {
+            font-size: 20px;
+            font-weight: bold;
+            color: #ffd700;
+            text-shadow: 0 0 5px #ffd700;
+        }
+        .add-btn {
+            background: linear-gradient(45deg, #ffd700, #ffed4a);
+            color: #1a1a1a;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(255,215,0,0.4);
+            transition: all 0.3s;
+            position: relative;
+            z-index: 10;
+        }
+        .add-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(255,215,0,0.6);
+        }
+        .cart-float {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: linear-gradient(45deg, #28a745, #20c997);
+            color: white;
+            border: none;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(40,167,69,0.4);
+            z-index: 1000;
+            transition: all 0.3s;
+        }
+        .cart-float:hover {
+            transform: scale(1.1);
+        }
+        .cart-count {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #dc3545;
+            color: white;
+            border-radius: 50%;
+            width: 25px;
+            height: 25px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #cart-modal, #address-modal, #payment-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 2000;
+            backdrop-filter: blur(5px);
+        }
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(135deg, #2d1b14, #4a2c1a);
+            padding: 30px;
+            border-radius: 20px;
+            border: 2px solid #ffd700;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+        }
+        .remove-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        input, textarea, select {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 1px solid #ffd700;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.9);
+            color: #1a1a1a;
+            font-size: 16px;
+        }
+        .btn-primary {
+            background: linear-gradient(45deg, #ffd700, #ffed4a);
+            color: #1a1a1a;
+            border: none;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s;
+        }
+        .btn-primary:hover {
+            transform: scale(1.02);
+        }
+        .total {
+            font-size: 24px;
+            font-weight: bold;
+            color: #ffd700;
+            text-align: right;
+            margin-top: 20px;
+        }
+        .adicionais {
+            display: none;
+            margin-top: 10px;
+        }
+        .adicionais.active {
+            display: block;
+        }
+        .adicional-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px;
+            background: rgba(255,255,255,0.1);
+            margin-bottom: 5px;
+            border-radius: 5px;
+        }
+        @media (max-width: 768px) {
+            .header {
+                width: 100%;
+                height: auto;
+                position: relative;
+            }
+            .menu-container {
+                margin-left: 0;
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <img src="[image:1]" alt="Logo Burger House Cardápio" class="logo">
+    </div>
+
+    <div class="menu-container">
+        <div class="section">
+            <h2>X-Burgers</h2>
+            <div class="item">
+                <div class="item-details">
+                    <h3>X-CALABRESA</h3>
+                    <p>Calabresa</p>
+                </div>
+                <div>
+                    <span class="price">R$16</span>
+                    <button class="add-btn" onclick="addToCart('X-CALABRESA', 16)">Adicionar</button>
+                </div>
+            </div>
+            <div class="item">
+                <div class="item-details">
+                    <h3>X-SUPER</h3>
+                    <p>Super, Tomate, Alface, Presunto</p>
+                </div>
+                <div>
+                    <span class="price">R$16</span>
+                    <button class="add-btn" onclick="addToCart('X-SUPER', 16)">Adicionar</button>
+                </div>
+            </div>
+            <div class="item">
+                <div class="item-details">
+                    <h3>X-BACON</h3>
+                    <p>Bacon, Cebola, Queijo</p>
+                </div>
+                <div>
+                    <span class="price">R$16</span>
+                    <button class="add-btn" onclick="addToCart('X-BACON', 16)">Adicionar</button>
+                </div>
+            </div>
+            <div class="item">
+                <div class="item-details">
+                    <h3>X-MILÃO</h3>
+                    <p>Frango/Carne, Bacon, Milho</p>
+                </div>
+                <div>
+                    <span class="price">R$13</span>
+                    <button class="add-btn" onclick="addToCart('X-MILÃO', 13)">Adicionar</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>ESPECIAIS</h2>
+            <div class="item">
+                <div class="item-details">
+                    <h3>X-DUPLO</h3>
+                    <p>Pão, Carne, Queijo, Tomate</p>
+                </div>
+                <div>
+                    <span class="price">R$30</span>
+                    <button class="add-btn" onclick="addToCart('X-DUPLO', 30)">Adicionar</button>
+                </div>
+            </div>
+            <div class="item">
+                <div class="item-details">
+                    <h3>X-TUDO</h3>
+                    <p>Pão, Carne, Cebola, Vagem</p>
+                </div>
+                <div>
+                    <span class="price">R$23</span>
+                    <button class="add-btn" onclick="addToCart('X-TUDO', 23)">Adicionar</button>
+                </div>
+            </div>
+            <div class="item">
+                <div class="item-details">
+                    <h3>X-GUARANÁ</h3>
+                    <p>Cebola, Tomate, Alface, Ovo</p>
+                </div>
+                <div>
+                    <span class="price">R$18</span>
+                    <button class="add-btn" onclick="addToCart('X-GUARANÁ', 18)">Adicionar</button>
+                </div>
+            </div>
+            <div class="item">
+                <div class="item-details">
+                    <h3>EGG-BURGUER</h3>
+                    <p>Presunto, Queijo, Alface</p>
+                </div>
+                <div>
+                    <span class="price">R$15</span>
+                    <button class="add-btn" onclick="addToCart('EGG-BURGUER', 15)">Adicionar</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>ADICIONAIS</h2>
+            <div class="item">
+                <div class="item-details">
+                    <h3>Carne</h3>
+                </div>
+                <div>
+                    <span class="price">R$5.00</span>
+                    <button class="add-btn" onclick="addToCart('Carne (adicional)', 5)">Adicionar</button>
+                </div>
+            </div>
+            <div class="item">
+                <div class="item-details">
+                    <h3>Bacon</h3>
+                </div>
+                <div>
+                    <span class="price">R$5.00</span>
+                    <button class="add-btn" onclick="addToCart('Bacon (adicional)', 5)">Adicionar</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>BEBIDAS</h2>
+            <div class="item">
+                <div class="item-details">
+                    <h3>Coca-Cola</h3>
+                </div>
+                <div>
+                    <span class="price">R$5</span>
+                    <button class="add-btn" onclick="addToCart('Coca-Cola', 5)">Adicionar</button>
+                </div>
+            </div>
+            <div class="item">
+                <div class="item-details">
+                    <h3>Guaraná</h3>
+                </div>
+                <div>
+                    <span class="price">R$5</span>
+                    <button class="add-btn" onclick="addToCart('Guaraná', 5)">Adicionar</button>
+                </div>
+            </div>
+            <div class="item">
+                <div class="item-details">
+                    <h3>Sucos</h3>
+                </div>
+                <div>
+                    <span class="price">R$7</span>
+                    <button class="add-btn" onclick="addToCart('Sucos', 7)">Adicionar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <button class="cart-float" onclick="openCart()" id="cartBtn">
+        🛒
+        <span class="cart-count" id="cartCount">0</span>
+    </button>
+
+    <!-- Modal Carrinho -->
+    <div id="cart-modal">
+        <div class="modal-content">
+            <h2>Carrinho</h2>
+            <div id="cart-items"></div>
+            <div class="total" id="cart-total">Total: R$0.00</div>
+            <button class="btn-primary" onclick="openAddress()">Prosseguir para Endereço</button>
+            <button class="btn-primary" onclick="closeCart()" style="background: #6c757d; margin-top: 10px;">Fechar</button>
+        </div>
+    </div>
+
+    <!-- Modal Endereço -->
+    <div id="address-modal">
+        <div class="modal-content">
+            <h2>Endereço de Entrega</h2>
+            <input type="text" id="name" placeholder="Seu Nome">
+            <input type="text" id="phone" placeholder="Telefone/WhatsApp">
+            <textarea id="address" placeholder="Endereço Completo"></textarea>
+            <textarea id="reference" placeholder="Referência (opcional)"></textarea>
+            <button class="btn-primary" onclick="openPayment()">Próximo: Pagamento</button>
+            <button class="btn-primary" onclick="closeAddress()" style="background: #6c757d; margin-top: 10px;">Voltar</button>
+        </div>
+    </div>
+
+    <!-- Modal Pagamento -->
+    <div id="payment-modal">
+        <div class="modal-content">
+            <h2>Forma de Pagamento</h2>
+            <select id="payment-method">
+                <option>Pix</option>
+                <option>Cartão</option>
+                <option>Dinheiro</option>
+            </select>
+            <div id="payment-details"></div>
+            <button class="btn-primary" onclick="sendToWhatsApp()">Finalizar Pedido</button>
+            <button class="btn-primary" onclick="closePayment()" style="background: #6c757d; margin-top: 10px;">Voltar</button>
+        </div>
+    </div>
+
+    <script>
+        let cart = [];
+
+        function addToCart(name, price) {
+            cart.push({name, price, qty: 1});
+            updateCartCount();
+            // Aqui poderia abrir modais de adicionais, mas para simplicidade, adiciona direto
+            alert(`${name} adicionado ao carrinho!`);
+        }
+
+        function updateCartCount() {
+            const count = cart.reduce((sum, item) => sum + item.qty, 0);
+            document.getElementById('cartCount').textContent = count;
+        }
+
+        function openCart() {
+            document.getElementById('cart-modal').style.display = 'block';
+            renderCart();
+        }
+
+        function closeCart() {
+            document.getElementById('cart-modal').style.display = 'none';
+        }
+
+        function renderCart() {
+            const itemsDiv = document.getElementById('cart-items');
+            const total = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+            let html = '';
+            cart.forEach((item, index) => {
+                html += `
+                    <div class="cart-item">
+                        <span>${item.name} x${item.qty} - R$${(item.price * item.qty).toFixed(2)}</span>
+                        <button class="remove-btn" onclick="removeFromCart(${index})">Remover</button>
+                    </div>
+                `;
+            });
+            itemsDiv.innerHTML = html;
+            document.getElementById('cart-total').textContent = `Total: R$${total.toFixed(2)}`;
+        }
+
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            updateCartCount();
+            renderCart();
+        }
+
+        function openAddress() {
+            closeCart();
+            document.getElementById('address-modal').style.display = 'block';
+        }
+
+        function closeAddress() {
+            document.getElementById('address-modal').style.display = 'none';
+            openCart();
+        }
+
+        function openPayment() {
+            closeAddress();
+            document.getElementById('payment-modal').style.display = 'block';
+        }
+
+        function closePayment() {
+            document.getElementById('payment-modal').style.display = 'none';
+            openAddress();
+        }
+
+        function sendToWhatsApp() {
+            const name = document.getElementById('name').value;
+            const phone = document.getElementById('phone').value;
+            const address = document.getElementById('address').value;
+            const reference = document.getElementById('reference').value;
+            const payment = document.getElementById('payment-method').value;
+
+            if (!name || !phone || !address || cart.length === 0) {
+                alert('Preencha todos os campos e adicione itens ao carrinho!');
+                return;
+            }
+
+            let orderText = `🆕 *Novo Pedido - Burger House Cardápio*
+
+`;
+            orderText += `*Cliente:* ${name}
+`;
+            orderText += `*Telefone:* ${phone}
+`;
+            orderText += `*Endereço:* ${address}
+`;
+            orderText += `*Referência:* ${reference || 'N/A'}
+`;
+            orderText += `*Pagamento:* ${payment}
+
+`;
+            orderText += `*Itens:*
+`;
+            cart.forEach(item => {
+                orderText += `- ${item.name} x${item.qty}: R$${(item.price * item.qty).toFixed(2)}
+`;
+            });
+            const total = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+            orderText += `
+*Total: R$${total.toFixed(2)}*`;
+
+            const whatsappUrl = `https://wa.me/5591993452950?text=${encodeURIComponent(orderText)}`; // Substitua SEUNUMERO pelo número do WhatsApp
+            window.open(whatsappUrl, '_blank');
+            alert('Pedido enviado para WhatsApp!');
+
+            // Limpa carrinho
+            cart = [];
+            updateCartCount();
+            closePayment();
+        }
+
+        // Fechar modais clicando fora
+        window.onclick = function(event) {
+            const modals = document.querySelectorAll('#cart-modal, #address-modal, #payment-modal');
+            modals.forEach(modal => {
+                if (event.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
+        }
+    </script>
+</body>
+</html>
